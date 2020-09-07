@@ -4,57 +4,41 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations.map
+import androidx.viewbinding.ViewBinding
+import com.example.rxandroid.databinding.ActivityMainBinding
+import com.example.rxandroid.model.Movie
+import com.example.rxandroid.view.adapter.MovieAdapter
+import com.example.rxandroid.viewmodel.MovieViewModel
 import rx.Observable
 import rx.Subscriber
 import rx.functions.Action1
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MovieViewModel by viewModels()
+
+    lateinit var binding: ActivityMainBinding
+
+    private lateinit var adapter: MovieAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val myObservable = Observable.create(
-            Observable.OnSubscribe<String> {
-                Log.d("Thread1", Thread.currentThread().name)
-                it.onNext("Hello World")
-                it.onCompleted()
-            }
-        )
-        val myListObservable = Observable.create(Observable.OnSubscribe<List<String>> {
-            it.onNext(arrayListOf("a", "b", "c"))
-        })
-        val mySubscriber = object : Subscriber<String>() {
-            override fun onNext(t: String?) {
-                Log.d("Thread", Thread.currentThread().name)
-                Toast.makeText(this@MainActivity, t, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-            }
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
+        viewModel.getNowPlayingMovie(1)
+        adapter = MovieAdapter(arrayListOf()) {
         }
-        myObservable.subscribe(mySubscriber)
-        val callAction = Action1<String> {
-            Log.d("Thread", Thread.currentThread().name)
-            Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-        }
-        myObservable.subscribe(callAction)
-        Observable.just("Hello,world!").map {
-            it.hashCode()
-        }.subscribe {
-            Log.d("Thread", Thread.currentThread().name)
-            Toast.makeText(this@MainActivity, it.toString(), Toast.LENGTH_SHORT).show()
-        }
-
-        myListObservable.flatMap {
-            Observable.from(it)
-        }.filter { it != "b" }.subscribe {
-            Log.d("Time", System.currentTimeMillis().toString())
-            Log.d("Tim", it)
-        }
+        binding.rcvMovie.adapter = adapter
+        bindViewModel()
     }
-
+    private fun bindViewModel() {
+        viewModel.result.observe(this, Observer {
+            adapter.addAll(it as ArrayList<Movie>)
+        })
+    }
 }
