@@ -21,7 +21,7 @@ import rx.functions.Action1
 class MainActivity : AppCompatActivity() {
     private val viewModel: MovieViewModel by viewModels()
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var adapter: MovieAdapter
 

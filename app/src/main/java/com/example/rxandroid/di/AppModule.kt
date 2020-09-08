@@ -12,8 +12,4 @@ class AppModule {
     @Singleton
     @Provides
     fun provideApi(): TheMovieApi = ApiService.getClient()
-
-    @Singleton
-    @Provides
-    fun provideMovieRepository(): MovieRepository = MovieRepository()
 }

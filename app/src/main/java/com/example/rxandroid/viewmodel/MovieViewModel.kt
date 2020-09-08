@@ -9,7 +9,7 @@ import com.example.rxandroid.repository.MovieRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MovieViewModel : ViewModel() {
+class MovieViewModel  : ViewModel() {
     @Inject
     lateinit var repository: MovieRepository
     var result : MutableLiveData<List<Movie>>

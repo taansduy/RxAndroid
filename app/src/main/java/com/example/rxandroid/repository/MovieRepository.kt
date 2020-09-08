@@ -11,9 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class MovieRepository {
-    @Inject
-    lateinit var api: TheMovieApi
+class MovieRepository @Inject constructor(private val api: TheMovieApi) {
     private var nowPlayingDisposable: Disposable? = null
     var nowPlayingResult: MutableLiveData<List<Movie>> = MutableLiveData()
     var error: MutableLiveData<String> = MutableLiveData()
